@@ -1,0 +1,109 @@
+/**
+* @author Bryan Stadick - stadi012@umn.edu
+* @version 1.0.0
+*
+* Micromouse.ino - Micromouse base code. Simply demos some of the functions available.
+*/
+
+/* This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#include <DFRobot2WD.h>
+
+DFRobot2WD robot = DFRobot2WD(true);
+
+//#define ENC
+//#define REFLECT
+#define OBS
+//#define REMOTE
+//#define IO
+//#define AVOID
+//#define FOLLOW
+//#define LGHT
+
+float* buf;
+int i = 0;
+char toggle = 0;
+
+void setup()
+{
+    Serial.begin(9600);
+}
+
+void loop()
+{
+    
+#ifdef ENC
+    while(robot.getEncRight() < 10 && robot.getEncLeft() < 10)
+    {
+        robot.motorRight(FORWARD, 60);
+        robot.motorLeft(FORWARD, 60);
+    }
+
+    robot.motorRight(FORWARD, 0);
+    robot.motorLeft(FORWARD, 0);
+    
+    Serial.print(robot.getEncRight());
+    Serial.print(", ");
+    Serial.println(robot.getEncLeft());
+
+    robot.setEnc(0, 0);
+
+    delay(1000);
+
+    while(!robot.getKeyOne())
+        delay(100);
+#endif    
+
+#ifdef REFLECT
+    buf = robot.getReflectivity();
+
+    for(i = 0; i < 5; i++)
+    {
+        Serial.print(buf[i]);
+        Serial.print(", ");
+    }
+    Serial.println("");
+#endif
+
+#ifdef OBS
+    Serial.print("O: ");
+    Serial.println(robot.obstacleDetect());
+#endif
+
+#ifdef REMOTE
+    Serial.print("R: ");
+    Serial.println(robot.getIRRemote());
+#endif
+
+#ifdef IO
+    digitalWrite(LED_RED, !(toggle & 1));
+    digitalWrite(LED_GREEN, toggle & 1);
+    if(toggle & 2)
+        robot.playNote(C1, 600);
+    toggle = toggle ^ 3;
+    delay(400);
+#endif
+
+#ifdef AVOID
+    while(!robot.getKeyOne()) ;
+    while(!robot.getKeyOne())
+        avoidWall();
+#endif
+
+    delay(100);
+    
+}
+
