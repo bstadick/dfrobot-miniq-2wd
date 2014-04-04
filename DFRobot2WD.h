@@ -139,7 +139,7 @@ class DFRobot2WD
         */
         inline void din(){ EIMSK = 0x00; useInterrupts = false; }
 
-        obs_t obstacleDetect();
+        obs_t obstacleDetect(int* countR, int* countL);
         boolean getKeyOne();
         boolean getKeyTwo();
         boolean getKeyThree();
@@ -516,9 +516,11 @@ void DFRobot2WD::obsSendRPulse()
 * Uses the two IR LEDs on the front of the robot and the IR receiver in the middle
 * to detect obstacles.
 *
+* @param countR - returns in it the count value of the right led pulse
+* @param countL - returns in it the count value of the left led pulse
 * @return if an obstacle is present to either the left, the right, both, or neither side
 */
-obs_t DFRobot2WD::obstacleDetect()
+obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
 {   
     obs_t obs = NONE;
     char i;
@@ -533,7 +535,9 @@ obs_t DFRobot2WD::obstacleDetect()
     }
     if(DFRobot2WD::count_obs > 15) // more than 15 pulses detected = obstacle
         obs = RIGHT;
-        
+    if(countR != NULL)
+        *countR = DFRobot2WD::count_obs;
+    
     DFRobot2WD::count_obs = 0;
     for(i = 0; i < 24; i++) // left transmitter sends 24 pulses
     {
@@ -547,10 +551,12 @@ obs_t DFRobot2WD::obstacleDetect()
         else
             obs = LEFT;
     }
+    if(countL != NULL)
+        *countL = DFRobot2WD::count_obs;
 
-    return obs;
-        
     PCICR = PCICR & 0XFE; // disable the IR receiver interrupt
+    
+    return obs;
 }
 
 //**************************** Line Following ****************************
@@ -826,6 +832,11 @@ void DFRobot2WD::playNote(float period, uint16_t time)
 * The reset button will reset the microcontroller when pressed. This is the equivalent
 * of power cycling. All RAM will be cleared and the program will be started from
 * the beginning.
+* <p>
+* If desired, rechargeable AA batteries can be used (such as NiMH). A 6V dc power
+* supply with a 3.5mm outer diameter plug can be used to charge the batteries while
+* in the robot. Simultaneous operation and charging cannot and should not occur.
+* Power off the robot before charging. Do not run the robot from the charger directly.
 */
 
 #endif
