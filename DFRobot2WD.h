@@ -95,6 +95,7 @@ class DFRobot2WD
 
         /**
         * Gets the value of the right encoder.
+        * One tick is about 1cm distance traveled.
         *
         * @return the tick count of the right encoder
         */
@@ -102,6 +103,7 @@ class DFRobot2WD
 
         /**
         * Gets the value of the left encoder.
+        * One tick is about 1cm distance traveled.
         *
         * @return the tick count of the left encoder.
         */
@@ -128,16 +130,6 @@ class DFRobot2WD
         * @param countL - the tick count to set the left encoder at
         */
         inline void setEnc(uint32_t countR, uint32_t countL){ count_r = countR; count_l = countL; }
-
-        /**
-        * Enables external interrupts for the encoders.
-        */
-        inline void ein(){ EIMSK = 0x03; useInterrupts = true; }
-
-        /**
-        * Disables external interrupts for the encoders
-        */
-        inline void din(){ EIMSK = 0x00; useInterrupts = false; }
 
         obs_t obstacleDetect(int* countR, int* countL);
         boolean getKeyOne();
@@ -176,17 +168,17 @@ class DFRobot2WD
         static void noteISR();
         
     private:
-        void dfRobotInit(boolean useInt);
+        void dfRobotInit();
 
         /**
         * Enable external interrupts on rising edge for the encoders.
         */
-        void interrupt01_init(){ EICRA = 0X0F; EIMSK = 0X03; sei(); }
+        void interrupt01_init(){ EICRA = 0X0F; EIMSK = 0X03; }
 
         /**
         * Enable interrupt on PB0 (pin 12), for use with the IR receiver.
         */
-        void pcint0_init(){ PCICR = 0X01; PCMSK0 = 0X01; sei(); }
+        void pcint0_init(){ PCICR = 0X01; PCMSK0 = 0X01; }
 
         void obsSendRPulse();
         void obsSendLPulse();
@@ -197,7 +189,6 @@ class DFRobot2WD
         void timer2_init();
 
     private:
-        boolean useInterrupts; // if external interrupts should be used
         int16_t pulseWidth; // the width of the IR pulse for IR signal reception
         int16_t irCode; // the IR signal code received
         float reflectivity[5]; // values of bottom reflectivity sensors
@@ -245,7 +236,7 @@ ISR(PCINT0_vect) // obstacle detection interrupt
     DFRobot2WD::obsISR();
 }
 
-ISR(TIMER2_OVF_vect)
+ISR(TIMER2_OVF_vect) // buzzer note interrupt
 {
   DFRobot2WD::noteISR();
 }
@@ -288,23 +279,13 @@ void DFRobot2WD::noteISR()
 */
 DFRobot2WD::DFRobot2WD()
 {
-    dfRobotInit(true);
-}
-
-/**
-* Crates a new robot instance.
-*/
-DFRobot2WD::DFRobot2WD(boolean useInt)
-{
-    dfRobotInit(useInt);
+    dfRobotInit();
 }
 
 /**
 * Initializes the new robot instance.
-*
-* @param useInt - sets if external interrupts for the encoders should be used
 */
-void DFRobot2WD::dfRobotInit(boolean useInt)
+void DFRobot2WD::dfRobotInit()
 {
     
     DFRobot2WD::count_r = 0;
@@ -320,13 +301,10 @@ void DFRobot2WD::dfRobotInit(boolean useInt)
     pinMode(IR_IN, INPUT);
     digitalWrite(R_IR,HIGH);
     digitalWrite(L_IR,HIGH);
-
-    useInterrupts = useInt;
-    if(useInt)
-    {
-        interrupt01_init();
-    }
-    pcint0_init(); // enable the IR receiver interrupt
+    
+    interrupt01_init(); // enable interrupts for encoders
+    
+    sei(); // enable global interrupts
 }
 
 //**************************** Motor Control ****************************
@@ -356,7 +334,7 @@ void DFRobot2WD::dfRobotInit(boolean useInt)
 */
 void DFRobot2WD::motorLeft(dir_t dir, unsigned char pwr)
 {
-    EIMSK = 0X00; // disable external interrupts
+    cli(); // critical section
     direction_l = dir;
     if(dir == FORWARD) // motor direction     
         digitalWrite(IN2, FORWARD); // forward
@@ -366,8 +344,7 @@ void DFRobot2WD::motorLeft(dir_t dir, unsigned char pwr)
         analogWrite(EN2, LOW); // stop
      else
         analogWrite(EN2, pwr); // set speed
-    if(useInterrupts)
-        EIMSK = 0X03; // reenable external interrupts
+    sei();
 }
 
 /**
@@ -378,7 +355,7 @@ void DFRobot2WD::motorLeft(dir_t dir, unsigned char pwr)
 */
 void DFRobot2WD::motorRight(dir_t dir, unsigned char pwr)
 {
-    EIMSK = 0X00; // disable external interrupts
+    cli(); // critical section
     direction_r = dir;
     if(dir == FORWARD) // motor direction
         digitalWrite(IN1, FORWARD); // forward
@@ -388,8 +365,7 @@ void DFRobot2WD::motorRight(dir_t dir, unsigned char pwr)
         analogWrite(EN1, LOW); // stop
     else
         analogWrite(EN1, pwr); // set speed
-    if(useInterrupts)
-        EIMSK = 0X03; // reenable external interrupts
+    sei();
 }
 
 /**
@@ -677,7 +653,7 @@ void DFRobot2WD::pulseDeal()
 */
 void DFRobot2WD::remoteDecode()
 {
-    EIMSK = 0X00; // disable external interrupts
+    cli(); // disable external interrupts
     timer1_init(); // turn on timer 1 for IR reciever
 
     TCNT1 = 0X00;
@@ -738,8 +714,7 @@ void DFRobot2WD::remoteDecode()
     }
 
     TCCR1B = TCCR1B & 0xF8; // turn timer 1 off
-    if(useInterrupts)
-        EIMSK = 0X03; // reenable external interrupts
+    sei();
 }
 
 //**************************** Wireless Communication ****************************
