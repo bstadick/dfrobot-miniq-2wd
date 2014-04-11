@@ -83,7 +83,6 @@ class DFRobot2WD
 {
     public:
         DFRobot2WD();
-        DFRobot2WD(boolean useInt);
         void motorLeft(dir_t dir, unsigned char pwr);
         void motorRight(dir_t dir, unsigned char pwr);
         void motorControl(dir_t dirR, unsigned char pwrR, dir_t dirL, unsigned char pwrL);
@@ -665,8 +664,7 @@ void DFRobot2WD::remoteDecode()
             irCode = 0xff00;
 
             TCCR1B = TCCR1B & 0xF8; // turn timer 1 off
-            if(useInterrupts)
-                EIMSK = 0X03; // reenable external interrupts
+            sei();
             return;
         }  
     }
@@ -692,8 +690,7 @@ void DFRobot2WD::remoteDecode()
             pulseDeal();
 
             TCCR1B = TCCR1B & 0xF8; // turn timer 1 off
-            if(useInterrupts)
-                EIMSK = 0X03; // reenable external interrupts
+            sei();
             return;
         }
         else if(pulseWidth >= 34 && pulseWidth <= 36) // 2.25ms
@@ -706,8 +703,7 @@ void DFRobot2WD::remoteDecode()
             if(pulseWidth >= 7 && pulseWidth <= 10) // 560us
             {
                 TCCR1B = TCCR1B & 0xF8; // turn timer 1 off
-                if(useInterrupts)
-                    EIMSK = 0X03; // reenable external interrupts
+                sei();
                 return;
             }
         }
