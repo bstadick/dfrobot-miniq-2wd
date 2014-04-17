@@ -215,19 +215,42 @@ int DFRobot2WD::count_obs = 0;
 int DFRobot2WD::note = 0;
 char DFRobot2WD::time = 0;
 char DFRobot2WD::flag = 0;
+void EncRISR();
+void EncLISR();
 
 
 //**************************** ISRs ****************************
+
+/*
+* Two functions are declared for the user to call custom code when
+* the right encoder and left encoder interrupts are triggered.
+* To use them, the user can define the following functions:
+*
+* void EncRISR(void) // right encoder ISR call
+* void EncLISR(void) // left encoder ISR call
+* 
+* To use these functions, the user must include
+* 
+* #define ENCISR
+* 
+* at the very top of the file (before the includes).
+*/
 
 // interrupt routines
 ISR(INT0_vect) // right motor encoder interrupt
 {
     DFRobot2WD::encRISR();
+	#ifdef ENCISR
+	EncRISR();
+	#endif
 }
 
 ISR(INT1_vect) // left motor encoder interrupt
 {
     DFRobot2WD::encLISR();
+	#ifdef ENCISR
+	EncLISR();
+	#endif
 }
 
 ISR(PCINT0_vect) // obstacle detection interrupt
