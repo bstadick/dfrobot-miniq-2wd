@@ -1,6 +1,6 @@
 /**
 * @author Bryan Stadick - stadi012@umn.edu
-* @version 1.0.1
+* @version 1.1.0
 *
 * DFRobot2WD.h - Library of functions for the DFRobot MiniQ 2WD
 *
@@ -98,7 +98,7 @@ class DFRobot2WD
         *
         * @return the tick count of the right encoder
         */
-        inline uint32_t getEncRight(){ return count_r; }
+        inline int32_t getEncRight(){ return count_r; }
 
         /**
         * Gets the value of the left encoder.
@@ -106,7 +106,7 @@ class DFRobot2WD
         *
         * @return the tick count of the left encoder.
         */
-        inline uint32_t getEncLeft(){ return count_l; }
+        inline int32_t getEncLeft(){ return count_l; }
 
         /**
         * Sets the value of the right encoder. Meant for resetting the count.
@@ -134,7 +134,7 @@ class DFRobot2WD
         boolean getKeyOne();
         boolean getKeyTwo();
         boolean getKeyThree();
-        float* getReflectivity();
+        void getReflectivity(float reflectivity[]);
         void playNote(float period, uint16_t time);
 
         /**
@@ -159,6 +159,20 @@ class DFRobot2WD
         * @return the code sent, otherwise 0xFF00 if no code was sent
         */
         int16_t getIRRemote(){ remoteDecode(); return irCode; }
+        
+        /**
+        * Sets the state of the red led.
+        *
+        * @param state - the state to change the led to (either HIGH or LOW)
+        */
+        inline void ledRed(boolean state) { digitalWrite(LED_RED, state); }
+        
+        /**
+        * Sets the state of the green led.
+        *
+        * @param state - the state to change the led to (either HIGH or LOW)
+        */
+        inline void ledGreen(boolean state) {digitalWrite(LED_GREEN, state); }
 
         // ISR functions
         static void encLISR();
@@ -194,8 +208,8 @@ class DFRobot2WD
 
     protected:
         // encoder tick counts
-        static uint32_t count_r;
-        static uint32_t count_l;
+        static int32_t count_r;
+        static int32_t count_l;
         // current wheel direction
         static dir_t direction_r;
         static dir_t direction_l;
@@ -207,8 +221,8 @@ class DFRobot2WD
 };
 
 // static variable definitions
-uint32_t DFRobot2WD::count_l = 0;
-uint32_t DFRobot2WD::count_r = 0;
+int32_t DFRobot2WD::count_l = 0;
+int32_t DFRobot2WD::count_r = 0;
 dir_t DFRobot2WD::direction_l = FORWARD;
 dir_t DFRobot2WD::direction_r = FORWARD;
 int DFRobot2WD::count_obs = 0;
@@ -325,6 +339,7 @@ void DFRobot2WD::dfRobotInit()
     digitalWrite(L_IR,HIGH);
     
     interrupt01_init(); // enable interrupts for encoders
+    pcint0_init();
     
     sei(); // enable global interrupts
 }
@@ -523,10 +538,8 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
     obs_t obs = NONE;
     char i;
 
-    pcint0_init();
-
     DFRobot2WD::count_obs = 0;
-    for(i = 0; i < 24; i++) // right transmitter sends 24 pulses
+    for(i = 0; i < 20; i++) // right transmitter sends 20 pulses
     {
         obsSendRPulse();
         delayMicroseconds(600);
@@ -535,9 +548,11 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
         obs = RIGHT;
     if(countR != NULL)
         *countR = DFRobot2WD::count_obs;
+        
+    delay(50);
     
     DFRobot2WD::count_obs = 0;
-    for(i = 0; i < 24; i++) // left transmitter sends 24 pulses
+    for(i = 0; i < 20; i++) // left transmitter sends 20 pulses
     {
         obsSendLPulse();
         delayMicroseconds(600);
@@ -551,8 +566,6 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
     }
     if(countL != NULL)
         *countL = DFRobot2WD::count_obs;
-
-    PCICR = PCICR & 0XFE; // disable the IR receiver interrupt
     
     return obs;
 }
@@ -573,16 +586,15 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
 /**
 * Gets the reflectivity of the surface below the robot over five different points.
 *
-* @return an array of the five sensor values, in the range of [0.0, 5.0]V, from left to right
+* @param reflectivity - an array of the five sensor values, in the range of [0.0, 5.0]V, from left to right
 */
-float* DFRobot2WD::getReflectivity()
+void DFRobot2WD::getReflectivity(float reflectivity[])
 {
     reflectivity[0] = ((analogRead(IR0) * VR) / 1024.0); // left most
     reflectivity[1] = ((analogRead(IR1) * VR) / 1024.0);
     reflectivity[2] = ((analogRead(IR2) * VR) / 1024.0); // middle
     reflectivity[3] = ((analogRead(IR3) * VR) / 1024.0);
     reflectivity[4] = ((analogRead(IR4) * VR) / 1024.0); // right most
-    return reflectivity;
 }
 
 //**************************** IR Remote ****************************
@@ -804,7 +816,7 @@ void DFRobot2WD::timer2_init()
 /**
 * Plays the note at the given frequency and for the given time (blocking)
 *
-* @param note - the note frequency to play
+* @param period - the note frequency to play
 * @param time - the time to play the note for (ms)
 */
 void DFRobot2WD::playNote(float period, uint16_t time)
