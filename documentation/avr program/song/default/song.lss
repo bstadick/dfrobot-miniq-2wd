@@ -1,0 +1,308 @@
+
+song.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         0000009a  00800100  000001c4  00000258  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         000001c4  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          00000004  0080019a  0080019a  000002f2  2**0
+                  ALLOC
+  3 .debug_aranges 00000020  00000000  00000000  000002f2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_pubnames 0000006d  00000000  00000000  00000312  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000001ff  00000000  00000000  0000037f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000157  00000000  00000000  0000057e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000001f2  00000000  00000000  000006d5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000050  00000000  00000000  000008c8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000000f2  00000000  00000000  00000918  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000068  00000000  00000000  00000a0a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 34 00 	jmp	0x68	; 0x68 <__ctors_end>
+   4:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   8:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  10:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  14:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  18:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  1c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  20:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  24:	0c 94 60 00 	jmp	0xc0	; 0xc0 <__vector_9>
+  28:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  2c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  30:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  34:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  38:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  3c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  40:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  44:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  48:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  4c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  50:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  54:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  58:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  5c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  60:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  64:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+
+00000068 <__ctors_end>:
+  68:	11 24       	eor	r1, r1
+  6a:	1f be       	out	0x3f, r1	; 63
+  6c:	cf ef       	ldi	r28, 0xFF	; 255
+  6e:	d8 e0       	ldi	r29, 0x08	; 8
+  70:	de bf       	out	0x3e, r29	; 62
+  72:	cd bf       	out	0x3d, r28	; 61
+
+00000074 <__do_copy_data>:
+  74:	11 e0       	ldi	r17, 0x01	; 1
+  76:	a0 e0       	ldi	r26, 0x00	; 0
+  78:	b1 e0       	ldi	r27, 0x01	; 1
+  7a:	e4 ec       	ldi	r30, 0xC4	; 196
+  7c:	f1 e0       	ldi	r31, 0x01	; 1
+  7e:	02 c0       	rjmp	.+4      	; 0x84 <.do_copy_data_start>
+
+00000080 <.do_copy_data_loop>:
+  80:	05 90       	lpm	r0, Z+
+  82:	0d 92       	st	X+, r0
+
+00000084 <.do_copy_data_start>:
+  84:	aa 39       	cpi	r26, 0x9A	; 154
+  86:	b1 07       	cpc	r27, r17
+  88:	d9 f7       	brne	.-10     	; 0x80 <.do_copy_data_loop>
+
+0000008a <__do_clear_bss>:
+  8a:	11 e0       	ldi	r17, 0x01	; 1
+  8c:	aa e9       	ldi	r26, 0x9A	; 154
+  8e:	b1 e0       	ldi	r27, 0x01	; 1
+  90:	01 c0       	rjmp	.+2      	; 0x94 <.do_clear_bss_start>
+
+00000092 <.do_clear_bss_loop>:
+  92:	1d 92       	st	X+, r1
+
+00000094 <.do_clear_bss_start>:
+  94:	ae 39       	cpi	r26, 0x9E	; 158
+  96:	b1 07       	cpc	r27, r17
+  98:	e1 f7       	brne	.-8      	; 0x92 <.do_clear_bss_loop>
+  9a:	0e 94 cd 00 	call	0x19a	; 0x19a <main>
+  9e:	0c 94 e0 00 	jmp	0x1c0	; 0x1c0 <_exit>
+
+000000a2 <__bad_interrupt>:
+  a2:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000000a6 <timer2_init>:
+	            0xff};
+
+//定时器2初始化函数
+void timer2_init(void)
+{
+	TCCR2A = 0X00;
+  a6:	10 92 b0 00 	sts	0x00B0, r1
+	TCCR2B = 0X07; //时钟源
+  aa:	87 e0       	ldi	r24, 0x07	; 7
+  ac:	80 93 b1 00 	sts	0x00B1, r24
+	TCNT2 = initial_value;
+  b0:	80 91 9c 01 	lds	r24, 0x019C
+  b4:	80 93 b2 00 	sts	0x00B2, r24
+	TIMSK2 = 0X01; //允许中断
+  b8:	81 e0       	ldi	r24, 0x01	; 1
+  ba:	80 93 70 00 	sts	0x0070, r24
+}
+  be:	08 95       	ret
+
+000000c0 <__vector_9>:
+//定时器/计数器2中断函数
+ISR(TIMER2_OVF_vect)
+{
+  c0:	1f 92       	push	r1
+  c2:	0f 92       	push	r0
+  c4:	0f b6       	in	r0, 0x3f	; 63
+  c6:	0f 92       	push	r0
+  c8:	11 24       	eor	r1, r1
+  ca:	8f 93       	push	r24
+  cc:	9f 93       	push	r25
+	TCNT2 = initial_value;//给定时器计时初值
+  ce:	80 91 9c 01 	lds	r24, 0x019C
+  d2:	80 93 b2 00 	sts	0x00B2, r24
+	PORTB ^= (1 << 3);    
+  d6:	85 b1       	in	r24, 0x05	; 5
+  d8:	98 e0       	ldi	r25, 0x08	; 8
+  da:	89 27       	eor	r24, r25
+  dc:	85 b9       	out	0x05, r24	; 5
+}
+  de:	9f 91       	pop	r25
+  e0:	8f 91       	pop	r24
+  e2:	0f 90       	pop	r0
+  e4:	0f be       	out	0x3f, r0	; 63
+  e6:	0f 90       	pop	r0
+  e8:	1f 90       	pop	r1
+  ea:	18 95       	reti
+
+000000ec <play_music>:
+//播放音乐函数
+void play_music(void)
+{
+	char time=0;
+	int  i;
+	if (music[ptr] != 0xFF && music[ptr] != 0x00) //判断是否是正常音符
+  ec:	40 91 9a 01 	lds	r20, 0x019A
+  f0:	50 91 9b 01 	lds	r21, 0x019B
+  f4:	fa 01       	movw	r30, r20
+  f6:	ee 0f       	add	r30, r30
+  f8:	ff 1f       	adc	r31, r31
+  fa:	e0 50       	subi	r30, 0x00	; 0
+  fc:	ff 4f       	sbci	r31, 0xFF	; 255
+  fe:	01 90       	ld	r0, Z+
+ 100:	f0 81       	ld	r31, Z
+ 102:	e0 2d       	mov	r30, r0
+ 104:	ef 3f       	cpi	r30, 0xFF	; 255
+ 106:	f1 05       	cpc	r31, r1
+ 108:	09 f4       	brne	.+2      	; 0x10c <play_music+0x20>
+ 10a:	3f c0       	rjmp	.+126    	; 0x18a <play_music+0x9e>
+ 10c:	da 01       	movw	r26, r20
+ 10e:	11 96       	adiw	r26, 0x01	; 1
+ 110:	30 97       	sbiw	r30, 0x00	; 0
+ 112:	f1 f0       	breq	.+60     	; 0x150 <play_music+0x64>
+	{
+
+		TCCR2B = 0X07;//定时器开始工作
+ 114:	87 e0       	ldi	r24, 0x07	; 7
+ 116:	80 93 b1 00 	sts	0x00B1, r24
+		initial_value = music[ptr]; //取设置频率数值
+ 11a:	f0 93 9d 01 	sts	0x019D, r31
+ 11e:	e0 93 9c 01 	sts	0x019C, r30
+		time = music[ptr + 1]; //取发声时间
+		for(i=0;i<time*15;i++)
+ 122:	aa 0f       	add	r26, r26
+ 124:	bb 1f       	adc	r27, r27
+ 126:	a0 50       	subi	r26, 0x00	; 0
+ 128:	bf 4f       	sbci	r27, 0xFF	; 255
+ 12a:	9c 91       	ld	r25, X
+ 12c:	8f e0       	ldi	r24, 0x0F	; 15
+ 12e:	98 9f       	mul	r25, r24
+ 130:	c0 01       	movw	r24, r0
+ 132:	11 24       	eor	r1, r1
+ 134:	20 e0       	ldi	r18, 0x00	; 0
+ 136:	30 e0       	ldi	r19, 0x00	; 0
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+ 138:	60 e4       	ldi	r22, 0x40	; 64
+ 13a:	7c e9       	ldi	r23, 0x9C	; 156
+ 13c:	05 c0       	rjmp	.+10     	; 0x148 <play_music+0x5c>
+ 13e:	fb 01       	movw	r30, r22
+ 140:	31 97       	sbiw	r30, 0x01	; 1
+ 142:	f1 f7       	brne	.-4      	; 0x140 <play_music+0x54>
+ 144:	2f 5f       	subi	r18, 0xFF	; 255
+ 146:	3f 4f       	sbci	r19, 0xFF	; 255
+ 148:	28 17       	cp	r18, r24
+ 14a:	39 07       	cpc	r19, r25
+ 14c:	c4 f3       	brlt	.-16     	; 0x13e <play_music+0x52>
+ 14e:	16 c0       	rjmp	.+44     	; 0x17c <play_music+0x90>
+		ptr += 2;//指向下一个音符
+	}
+	else if (music[ptr] == 0x00) //判断是否是休止符
+	{
+		time = music[ptr + 1];
+		for(i=0;i<time*15;i++)
+ 150:	aa 0f       	add	r26, r26
+ 152:	bb 1f       	adc	r27, r27
+ 154:	a0 50       	subi	r26, 0x00	; 0
+ 156:	bf 4f       	sbci	r27, 0xFF	; 255
+ 158:	9c 91       	ld	r25, X
+ 15a:	8f e0       	ldi	r24, 0x0F	; 15
+ 15c:	98 9f       	mul	r25, r24
+ 15e:	c0 01       	movw	r24, r0
+ 160:	11 24       	eor	r1, r1
+ 162:	20 e0       	ldi	r18, 0x00	; 0
+ 164:	30 e0       	ldi	r19, 0x00	; 0
+ 166:	60 e4       	ldi	r22, 0x40	; 64
+ 168:	7c e9       	ldi	r23, 0x9C	; 156
+ 16a:	05 c0       	rjmp	.+10     	; 0x176 <play_music+0x8a>
+ 16c:	fb 01       	movw	r30, r22
+ 16e:	31 97       	sbiw	r30, 0x01	; 1
+ 170:	f1 f7       	brne	.-4      	; 0x16e <play_music+0x82>
+ 172:	2f 5f       	subi	r18, 0xFF	; 255
+ 174:	3f 4f       	sbci	r19, 0xFF	; 255
+ 176:	28 17       	cp	r18, r24
+ 178:	39 07       	cpc	r19, r25
+ 17a:	c4 f3       	brlt	.-16     	; 0x16c <play_music+0x80>
+		_delay_ms(10);//延时
+		ptr += 2;
+ 17c:	4e 5f       	subi	r20, 0xFE	; 254
+ 17e:	5f 4f       	sbci	r21, 0xFF	; 255
+ 180:	50 93 9b 01 	sts	0x019B, r21
+ 184:	40 93 9a 01 	sts	0x019A, r20
+ 188:	08 95       	ret
+	}
+	else //结束符,停止延时后继续
+	{
+		TCCR2B = 0X00;//定时器停止工作
+ 18a:	10 92 b1 00 	sts	0x00B1, r1
+		PORTB |= (1 << 3);
+ 18e:	2b 9a       	sbi	0x05, 3	; 5
+		for(i=0;i<time*15;i++)
+		_delay_ms(10);//延时
+		ptr = 0;
+ 190:	10 92 9b 01 	sts	0x019B, r1
+ 194:	10 92 9a 01 	sts	0x019A, r1
+ 198:	08 95       	ret
+
+0000019a <main>:
+	}
+}
+//主函数
+int main(void)
+{
+	DDRB = 0XFE;//对PORTB端口各引脚的模式进行设置
+ 19a:	8e ef       	ldi	r24, 0xFE	; 254
+ 19c:	84 b9       	out	0x04, r24	; 4
+	PORTB |= (1 << 0);//设置PB0引脚的上拉电阻
+ 19e:	28 9a       	sbi	0x05, 0	; 5
+	            0xff};
+
+//定时器2初始化函数
+void timer2_init(void)
+{
+	TCCR2A = 0X00;
+ 1a0:	10 92 b0 00 	sts	0x00B0, r1
+	TCCR2B = 0X07; //时钟源
+ 1a4:	87 e0       	ldi	r24, 0x07	; 7
+ 1a6:	80 93 b1 00 	sts	0x00B1, r24
+	TCNT2 = initial_value;
+ 1aa:	80 91 9c 01 	lds	r24, 0x019C
+ 1ae:	80 93 b2 00 	sts	0x00B2, r24
+	TIMSK2 = 0X01; //允许中断
+ 1b2:	81 e0       	ldi	r24, 0x01	; 1
+ 1b4:	80 93 70 00 	sts	0x0070, r24
+int main(void)
+{
+	DDRB = 0XFE;//对PORTB端口各引脚的模式进行设置
+	PORTB |= (1 << 0);//设置PB0引脚的上拉电阻
+	timer2_init();//定时器2初始化
+	sei();//设置全局中断允许
+ 1b8:	78 94       	sei
+	while (1)
+	{
+		play_music();//播放音乐
+ 1ba:	0e 94 76 00 	call	0xec	; 0xec <play_music>
+ 1be:	fd cf       	rjmp	.-6      	; 0x1ba <main+0x20>
+
+000001c0 <_exit>:
+ 1c0:	f8 94       	cli
+
+000001c2 <__stop_program>:
+ 1c2:	ff cf       	rjmp	.-2      	; 0x1c2 <__stop_program>

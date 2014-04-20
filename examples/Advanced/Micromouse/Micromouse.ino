@@ -1,6 +1,6 @@
 /**
 * @author Bryan Stadick - stadi012@umn.edu
-* @version 1.0.0
+* @version 1.1.0
 *
 * Micromouse.ino - Micromouse base code. Simply demos some of the functions available.
 */
@@ -22,24 +22,23 @@
 
 #include <DFRobot2WD.h>
 
-DFRobot2WD robot = DFRobot2WD(true);
+DFRobot2WD robot = DFRobot2WD();
 
 //#define ENC
 //#define REFLECT
-#define OBS
+//#define OBS
 //#define REMOTE
 //#define IO
 //#define AVOID
-//#define FOLLOW
-//#define LGHT
 
 float* buf;
-int i = 0;
+int i = 0, r, l;
 char toggle = 0;
 
 void setup()
 {
     Serial.begin(9600);
+    while(!robot.getKeyOne()) ;
 }
 
 void loop()
@@ -52,8 +51,7 @@ void loop()
         robot.motorLeft(FORWARD, 60);
     }
 
-    robot.motorRight(FORWARD, 0);
-    robot.motorLeft(FORWARD, 0);
+    robot.motorStop();
     
     Serial.print(robot.getEncRight());
     Serial.print(", ");
@@ -80,7 +78,11 @@ void loop()
 
 #ifdef OBS
     Serial.print("O: ");
-    Serial.println(robot.obstacleDetect());
+    Serial.print(robot.obstacleDetect(&r, &l));
+    Serial.print(" r: ");
+    Serial.print(r);
+    Serial.print(" l: ");
+    Serial.println(l);
 #endif
 
 #ifdef REMOTE
