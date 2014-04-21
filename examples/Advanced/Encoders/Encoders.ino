@@ -28,6 +28,7 @@ DFRobot2WD robot = DFRobot2WD();
 void setup() {
   // put your setup code here, to run once:
 
+  Serial.begin(9600);
   // wait for key one to be pressed before beginning
   while(!robot.getKeyOne()) ;
 }
