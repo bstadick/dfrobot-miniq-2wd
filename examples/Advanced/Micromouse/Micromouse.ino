@@ -24,12 +24,13 @@
 
 DFRobot2WD robot = DFRobot2WD();
 
-//#define ENC
-//#define REFLECT
-//#define OBS
-//#define REMOTE
-//#define IO
-//#define AVOID
+#define ENC
+#define REFLECT
+#define OBSIR
+#define OBSTACT
+#define REMOTE
+#define IO
+#define AVOID
 
 float* buf;
 int i = 0, r, l;
@@ -38,6 +39,9 @@ char toggle = 0;
 void setup()
 {
     Serial.begin(9600);
+#ifdef OBSTACT
+    robot.initTactile();
+#endif
     while(!robot.getKeyOne()) ;
 }
 
@@ -66,7 +70,7 @@ void loop()
 #endif    
 
 #ifdef REFLECT
-    buf = robot.getReflectivity();
+    robot.getReflectivity(buf);
 
     for(i = 0; i < 5; i++)
     {
@@ -76,13 +80,18 @@ void loop()
     Serial.println("");
 #endif
 
-#ifdef OBS
+#ifdef OBSIR
     Serial.print("O: ");
     Serial.print(robot.obstacleDetect(&r, &l));
     Serial.print(" r: ");
     Serial.print(r);
     Serial.print(" l: ");
     Serial.println(l);
+#endif
+
+#ifdef OBSTACT
+    Serial.print("T: ");
+    Serial.print(robot.getTactileState());
 #endif
 
 #ifdef REMOTE
@@ -94,7 +103,7 @@ void loop()
     digitalWrite(LED_RED, !(toggle & 1));
     digitalWrite(LED_GREEN, toggle & 1);
     if(toggle & 2)
-        robot.playNote(C1, 600);
+        robot.playNote(NOTE_P_C1, 600);
     toggle = toggle ^ 3;
     delay(400);
 #endif

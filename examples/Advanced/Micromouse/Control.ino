@@ -130,9 +130,9 @@ void followLine()
         // search for the line
         if(!search()) {
             // line not found, give up
-            robot.playNote(C1, 250);
+            robot.playNote(NOTE_P_C1, 250);
             delay(250);
-            robot.playNote(C1, 250);
+            robot.playNote(NOTE_P_C1, 250);
             // wait for key one to be pressed before beginning again
             while(!robot.getKeyOne()) ;
         }

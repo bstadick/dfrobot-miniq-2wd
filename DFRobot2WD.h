@@ -1,26 +1,27 @@
 /**
 * @author Bryan Stadick - stadi012@umn.edu
 * @version 1.1.0
+* @file
 *
 * DFRobot2WD.h - Library of functions for the DFRobot MiniQ 2WD
-*
-* DFRobot is a trademark of DFRobot. The author of this library does not claim
+* <p>
+* DFRobot is a trademark of <a href="http://www.dfrobot.com">DFRobot</a>. The author of this library does not claim
 * any ownership or association with DFRobot or their affiliates.
-*/
-
-/* This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+* <p>
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation; either
+* version 2.1 of the License, or (at your option) any later version.
+* <p>
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+* <p>
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+* <p>
 */
 
 
@@ -38,50 +39,130 @@
 #include "Notes.h"
 
 // Constants
-#define VR 5.0 // voltage reference (5V)
-#define REF_SIZE 5 // number of reflectivity sensors
+/**
+* Voltage reference value (5V).
+*/
+#define VR 5.0
+/**
+* Number of reflectivity sensors.
+*/
+#define REF_SIZE 5
 
 // Motor pins
-#define EN1 6 // pin to run the right motor (digital w/ analog write)
-#define IN1 7 // pin to control right motor direction (digital)
-#define EN2 5 // pin to run the left motor (digital w/ analog write)
-#define IN2 4 // pin to control left motor direction (digital)
+/**
+* Pin to run the right motor (digital w/ analog write)
+*/
+#define EN1 6
+/**
+* Pin to control right motor direction (digital).
+*/
+#define IN1 7
+/**
+* Pin to run the left motor (digital w/ analog write).
+*/
+#define EN2 5
+/**
+* Pin to control left motor direction (digital).
+*/
+#define IN2 4
 
 // IR pins
-#define IR_IN 8 // IR receiver pin (digital)
-#define L_IR 9 // left ir transmitter pin (digital)
-#define R_IR 10 // right ir transmitter pin (digital)
-#define L_TACT 9 // optional tactile sensor pin (digital)
-#define R_TACT 10 // optional tactile sensor pin (digital)
+/**
+* IR receiver pin (digital).
+*/
+#define IR_IN 8
+/**
+* Left IR transmitter (LED) pin (digital).
+*/
+#define L_IR 9
+/**
+* Right IR transmitter (LED) pin (digital).
+*/
+#define R_IR 10
+/**
+* Optional, custom tactile sensor pin (digital).
+*/
+#define L_TACT 9
+/**
+* Optional, custom tactile sensor pin (digital).
+*/
+#define R_TACT 10
 
 // Analog pins
-#define VREF 6 // supply voltage (analog)
-#define PB 5 // push buttons (analog)
-#define LIGHT 4 // left/right light intensity sensors
-#define IR0 0 // bottom left IR reflectivity sensor
+/**
+* Supply voltage pin (analog).
+*/
+#define VREF 6
+/**
+* Push buttons pin (analog).
+*/
+#define PB 5
+/**
+* Left/right light intensity sensors pin (analog).
+*/
+#define LIGHT 4
+/**
+* Bottom left IR reflectivity sensor pin(analog).
+*/
+#define IR0 0
+/**
+* Bottom, center left IR reflectivity sensor pin(analog).
+*/
 #define IR1 1
-#define IR2 2 // bottom middle IR reflectivity sensor
+/**
+* Bottom middle IR reflectivity sensor pin (analog).
+*/
+#define IR2 2
+/**
+* Bottom, center right IR reflectivity sensor pin (analog).
+*/
 #define IR3 3
-#define IR4 7 // bottom right IR reflectivity sensor
+/**
+* Bottom right IR reflectivity sensor pin (analog).
+*/
+#define IR4 7
 
 // Other pins
-#define BUZZER 11 // Buzzer pin (digital w/ analog write)
-#define LED_RED 12 // Red LED pin (digital)
-#define LED_GREEN 13 // Green LED pin (digital)
+/**
+* Buzzer pin (digital w/ analog write).
+*/
+#define BUZZER 11
+/**
+* Red LED pin (digital).
+*/
+#define LED_RED 12
+/**
+* Green LED pin (digital).
+*/
+#define LED_GREEN 13
 
 /**
 * Direction of wheel travel.
 */
-enum dir_t {BACKWARD = 0, FORWARD = 1};
-typedef enum dir_t dir_t;
+typedef enum dir_t {BACKWARD = 0, /**< Drive backwards. */
+                    FORWARD = 1 /**< Drive forwards. */
+                    }dir_t;
 
 /**
-* Location of obstacle.
+* Location/presence of obstacle.
 */
-enum obs_t {NONE = 0, IND = 0, RIGHT = 1, FRONT = 1, 
-			SWITCH1 = 1, LEFT = 2, BACK = 2, SWITCH2 = 2, BOTH = 3};
-typedef enum obs_t obs_t;
+typedef enum obs_t {NONE = 0, /**< No obstacles detected. */
+                    IND = 0, /**< Obstacle presence indeterminate. */
+                    RIGHT = 1, /**< Obstacle to the right. */
+                    FRONT = 1, /**< Obstacle to the front. */
+                    SWITCH1 = 1, /**< Obstacle on switch 1. */
+                    LEFT = 2, /**< Obstacle to the left. */
+                    BACK = 2, /**< Obstacle to the back. */
+                    SWITCH2 = 2, /**< Obstacle on switch 2. */
+                    BOTH = 3 /**< Obstacle to the right and left or on switch 1 and switch 2. */
+                    } obs_t;
 
+/**
+* The DFRobot2WD class provides functions and definitions to provide a simpler
+* interface with the DFRobot MiniQ 2WD. Most of the hardware is abstracted away
+* providing for the user the ability to program the robot without knowing exactly
+* how it works.
+*/
 class DFRobot2WD
 {
     public:
@@ -136,7 +217,7 @@ class DFRobot2WD
 		void initIRDetect();
         obs_t obstacleDetect(int* countR, int* countL);
 		void initTactile();
-		obs_t getSwitchState();
+		obs_t getTactileState();
         boolean getKeyOne();
         boolean getKeyTwo();
         boolean getKeyThree();
@@ -214,16 +295,37 @@ class DFRobot2WD
 		boolean useTactile;
 
     protected:
-        // encoder tick counts
+        /**
+        * The number of tick counts of the right encoder.
+        */
         static int32_t count_r;
+        /**
+        * The number of tick counts of the left encoder.
+        */
         static int32_t count_l;
-        // current wheel direction
+        /**
+        * The current direction of the right wheel.
+        */
         static dir_t direction_r;
+        /**
+        * The current direction of the left wheel.
+        */
         static dir_t direction_l;
-        // number of obstacle pulses received
+        /**
+        * The number of detected IR pulses from the IR LED. 
+        */
         static int count_obs;
-        static int  note; // value for each note timer
-        static char time; // each note playing time
+        /**
+        * The value for the note period.
+        */
+        static int  note;
+        /**
+        * The duration of each note.
+        */
+        static char time;
+        /**
+        * Whether the PWM pulse of the note is currently high or low.
+        */
         static char flag;
 };
 
@@ -236,7 +338,31 @@ int DFRobot2WD::count_obs = 0;
 int DFRobot2WD::note = 0;
 char DFRobot2WD::time = 0;
 char DFRobot2WD::flag = 0;
+
+/**
+* The declaration of the custom user code for the right encoder ISR.
+* Requires the user to define the function in their own code, and place
+* \code{.c} #define ENCISR \endcode
+* before the
+* \code{.c} #include <DFRobot2WD.h> \endcode
+* in their own code.
+*
+* @see ISR(INT0_vect)
+* @see DFRobot2WD::encRISR()
+*/
 void EncRISR();
+
+/**
+* The declaration of the custom user code for the left encoder ISR.
+* Requires the user to define the function in their own code, and place
+* \code{.c} #define ENCISR \endcode
+* before the
+* \code{.c} #include <DFRobot2WD.h> \endcode
+* in their own code.
+*
+* @see ISR(INT1_vect)
+* @see DFRobot2WD::encLISR()
+*/
 void EncLISR();
 
 
@@ -246,19 +372,24 @@ void EncLISR();
 * Two functions are declared for the user to call custom code when
 * the right encoder and left encoder interrupts are triggered.
 * To use them, the user can define the following functions:
-*
+* <p>
 * void EncRISR(void) // right encoder ISR call
 * void EncLISR(void) // left encoder ISR call
-* 
+* <p>
 * To use these functions, the user must include
-* 
+* <p>
 * #define ENCISR
-* 
+* <p>
 * at the very top of the file (before the includes).
+* <p>
 */
 
-// interrupt routines
-ISR(INT0_vect) // right motor encoder interrupt
+/**
+* The right motor encoder tick interrupt vector.
+*
+* @see DFRobot2WD::encRISR()
+*/
+ISR(INT0_vect)
 {
     DFRobot2WD::encRISR();
 	#ifdef ENCISR
@@ -266,7 +397,12 @@ ISR(INT0_vect) // right motor encoder interrupt
 	#endif
 }
 
-ISR(INT1_vect) // left motor encoder interrupt
+/**
+* The left motor encoder tick interrupt vector.
+*
+* @see DFRobot2WD::encLISR()
+*/
+ISR(INT1_vect)
 {
     DFRobot2WD::encLISR();
 	#ifdef ENCISR
@@ -274,16 +410,31 @@ ISR(INT1_vect) // left motor encoder interrupt
 	#endif
 }
 
-ISR(PCINT0_vect) // obstacle detection interrupt
+/**
+* The IR obstacle detection reflection interrupt vector.
+*
+* @see DFRobot2WD::obsISR()
+*/
+ISR(PCINT0_vect)
 {
     DFRobot2WD::obsISR();
 }
 
-ISR(TIMER2_OVF_vect) // buzzer note interrupt
+/**
+* The buzzer PWM note timer interrupt vector.
+*
+* @see DFRobot2WD::noteISR()
+*/
+ISR(TIMER2_OVF_vect)
 {
   DFRobot2WD::noteISR();
 }
 
+/**
+* The right encoder tick ISR.
+*
+* @see ISR(INT0_vect)
+*/
 void DFRobot2WD::encRISR()
 {
     if(DFRobot2WD::direction_r == FORWARD)
@@ -292,6 +443,11 @@ void DFRobot2WD::encRISR()
         DFRobot2WD::count_r--;
 }
 
+/**
+* The left encoder tick ISR.
+*
+* @see ISR(INT1_vect)
+*/
 void DFRobot2WD::encLISR()
 {
     if(DFRobot2WD::direction_l == FORWARD)
@@ -300,11 +456,21 @@ void DFRobot2WD::encLISR()
         DFRobot2WD::count_l--;
 }
 
+/**
+* The IR obstacle detection reflection detection ISR.
+*
+* @see ISR(PCINT0_vect)
+*/
 void DFRobot2WD::obsISR()
 {
     DFRobot2WD::count_obs++;
 }
 
+/**
+* The buzzer PWM note timer ISR.
+*
+* @see ISR(TIMER2_OVF_vect)
+*/
 void DFRobot2WD::noteISR()
 {
     TCNT2 = DFRobot2WD::note;
@@ -318,7 +484,7 @@ void DFRobot2WD::noteISR()
 //**************************** Constructors ****************************
 
 /**
-* Crates a new robot instance.
+* Creates a new robot instance.
 */
 DFRobot2WD::DFRobot2WD()
 {
@@ -354,7 +520,7 @@ void DFRobot2WD::dfRobotInit()
 
 //**************************** Motor Control ****************************
 
-/**
+/*
 * The encoders on the wheels are gear tooth counters. They trigger an external
 * interrupt every time a gear tooth passes by. There are a total of 12 teeth
 * on each wheel. Each wheel is about 4cm in diameter making the resolution of
@@ -369,6 +535,7 @@ void DFRobot2WD::dfRobotInit()
 * fast, as they will interrupt any other code running and will not relinquish control
 * until done. This means long running operations in an ISR may cause other ISRs
 * to not run when needed (and thus miss ticks on the other wheel).
+* <p>
 */
 
 /**
@@ -429,13 +596,14 @@ void DFRobot2WD::motorControl(dir_t dirR, unsigned char pwrR, dir_t dirL, unsign
 
 //**************************** Push Keys ****************************
 
-/**
+/*
 * The keys are all attached to an analog pin and create different level voltage
 * dividers to determine which key is pressed based on the voltage level.
 * Because of this, if all three keys are pressed at once then key one will be
 * detected, while keys two and three will not be detected. If keys two and three
 * are pressed, key two will be detected. If keys one and three are pressed, then
 * key one will be detected. The order of precedence is: k_one > k_two > k_three.
+* <p>
 */
 
 /**
@@ -477,6 +645,8 @@ boolean DFRobot2WD::getKeyTwo()
 
 /**
 * Gets if key three is pressed.
+* <p>
+* Key three has lowest precedence.
 *
 * @return if key three is pressed
 */
@@ -494,13 +664,14 @@ boolean DFRobot2WD::getKeyThree()
 
 //**************************** Obstacle Detection ****************************
 
-/**
+/*
 * Potentiometer W2 is used to attenuate the amount of light output by the IR LEDs.
 * This allows for tuning of the amount of light emitted to reduce glare or possible
 * over exposure and allows for an overall more tunable experience. The IR receiver
 * (also used for the IR Remote), is found on the front center of the robot.
 * It is used to pick up the pulses sent out by the IR LEDs to determine if an
 * object is present based on how much light is reflected back.
+* <p>
 */
 
 /**
@@ -594,14 +765,32 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
 
 //**************************** Obstacle Detection ****************************
 
-/**
-The IR obstacle detection above tends not to be the most robust method for detecting objects in your path. Instead it is recommended that you wire up a pair of micro switches, one on the front and one on the back. This will give a more robust way of telling if a wall is in your way.
-<p>
-The wiring is as described. You wire the normally open (NO) node of the micro switch to the cathode of the IR LED (negative terminal). You can wire switch one to the right IR LED and switch two to the left IR LED. You do not need to remove the LEDs for this to work. The common node of each micro switch is wired to ground through a 1Kohm or 10Kohm pull down resistor. Both can be wired to the same resistor. The pull down resistor is then wired to the ground on the robot. There are several options for doing this. The easiest is to connect the resistor to a single standard 0.1" pitch receptacle, and then plug the receptacle onto the bottom-left pin of the ICSP header (the pin closest to the batteries and wheel).
-<p>
-This setup will allow you to tell when you hit a wall or other object. Both IR LED pins will be pulled low when you hit either switch one or switch two. This means you can't detect direction, except by inferring it through your current direction of travel. In theory, you could add more micro switches and determine which one was pressed based on your current direction of travel.
-<p>
-To use the switches, you will need to set the IR LED pins to inputs and detect when they are false. To regain use of your IR LEDs, simple change the pins to outputs and unplug the pull-down resistor from the ICSP ground pin.
+/*
+* The IR obstacle detection above tends not to be the most robust method for
+* detecting objects in your path. Instead it is recommended that you wire up a
+* pair of micro switches, one on the front and one on the back. This will give a
+* more robust way of telling if a wall is in your way.
+* <p>
+* The wiring is as described. You wire the normally open (NO) node of the micro 
+* switch to the cathode of the IR LED (negative terminal). You can wire switch one
+* to the right IR LED and switch two to the left IR LED. You do not need to remove
+* the LEDs for this to work. The common node of each micro switch is wired to ground
+* through a 1Kohm or 10Kohm pull down resistor. Both can be wired to the same resistor.
+* The pull down resistor is then wired to the ground on the robot. There are several
+* options for doing this. The easiest is to connect the resistor to a single standard
+* 0.1" pitch receptacle, and then plug the receptacle onto the bottom-left pin of
+* the ICSP header (the pin closest to the batteries and wheel).
+* <p>
+* This setup will allow you to tell when you hit a wall or other object. Both IR
+* LED pins will be pulled low when you hit either switch one or switch two. This
+* means you can't detect direction, except by inferring it through your current
+* direction of travel. In theory, you could add more micro switches and determine
+* which one was pressed based on your current direction of travel.
+* <p>
+* To use the switches, you will need to set the IR LED pins to inputs and detect
+* when they are false. To regain use of your IR LEDs, simple change the pins to
+* outputs and unplug the pull-down resistor from the ICSP ground pin.
+* <p>
 */
 
 /**
@@ -616,8 +805,11 @@ void DFRobot2WD::initTactile() {
 
 /**
 * Gets the state of the switches, based off current direction of travel.
+* Configured for a front switch and a back switch.
+*
+* @return the state of the switches, either front asserted, back asserted, or neither/invalid
 */
-obs_t DFRobot2WD::getSwitchState() {
+obs_t DFRobot2WD::getTactileState() {
 
 	if(!useTactile)
 		return IND;
@@ -634,7 +826,7 @@ obs_t DFRobot2WD::getSwitchState() {
 
 //**************************** Line Following ****************************
 
-/**
+/*
 * Line following uses five IR reflectivity sensors on the bottom of the robot.
 * The reflectivity will depend on the surface texture and color, thus making
 * it possible to detect different colors and thus lines.
@@ -643,6 +835,7 @@ obs_t DFRobot2WD::getSwitchState() {
 * The values for any given surface will range significantly between sensors based on many different factors.
 * Always use a range of values when doing comparisons for detecting different surfaces.
 * For best results, detect either a black line on a white surface or a white line on a black surface.
+* <p>
 */
 
 /**
@@ -661,12 +854,13 @@ void DFRobot2WD::getReflectivity(float reflectivity[])
 
 //**************************** IR Remote ****************************
 
-/**
+/*
 * The center sensor on the front of the robot is the IR receiver (also used for
 * the obstacle detection). It can pick up pulses sent out by IR sources.
 * This can include the on-board IR LEDs or a separate IR remote control 
 * (such as the one that comes with the kit). With a remote, the robot can be 
 * given commands, which is what this section uses the IR receiver for.
+* <p>
 */
 
 /**
@@ -812,7 +1006,7 @@ void DFRobot2WD::remoteDecode()
 
 //**************************** Wireless Communication ****************************
 
-/**
+/*
 * No wireless communication functions are present in this library. The DFRobot
 * MiniQ 2WD robot platform uses standard Xbee compatible radios to communicate
 * wirelessly. The robot use the Rx/Tx USART module of the microcontroller to send
@@ -839,21 +1033,23 @@ void DFRobot2WD::remoteDecode()
 * <p>
 * For more information and to make sure you are using compatible radios, see
 * {@link https://www.sparkfun.com/pages/xbee_guide}
+* <p>
 */
 
 //**************************** On-board LEDs & Other ****************************
 
-/**
+/*
 * The two black sensors on the front are light intensity sensors. They are wired
 * together in a voltage divider through the W1 potentiometer. This configuration
 * allows for the determining the direction of a light source. The higher the light
 * intensity to the right, the lower the voltage ratio and vice-versa. This value is
 * tunable using the W1 potentiometer to correct for any bias or create bias to 
 * one side or the other.
+* <p>
 */
 
 
-/**
+/*
 * The blue LEDs under the robot cannot be controlled. They are hardwired to power.
 * <p>
 * The red and green LEDs on top can be controlled through pins LED_RED and LED_GREEN.
@@ -862,6 +1058,7 @@ void DFRobot2WD::remoteDecode()
 * <p>
 * The buzzer is connected to the pin BUZZER. It can create different tones by
 * writing a PWM signal to it.
+* <p>
 */
 
 /**
@@ -892,7 +1089,7 @@ void DFRobot2WD::playNote(float period, uint16_t time)
     TCCR2B = TCCR2B & 0XF8; // turn timer 2 off
 }
 
-/**
+/*
 * The supply voltage can be read using the getVoltage function.
 * <p>
 * The power button is a latching button that allows for click-on, click-off operation.
@@ -905,6 +1102,7 @@ void DFRobot2WD::playNote(float period, uint16_t time)
 * supply with a 3.5mm outer diameter plug can be used to charge the batteries while
 * in the robot. Simultaneous operation and charging cannot and should not occur.
 * Power off the robot before charging. Do not run the robot from the charger directly.
+* <p>
 */
 
 #endif
