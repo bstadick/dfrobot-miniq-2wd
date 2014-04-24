@@ -51,6 +51,8 @@
 #define IR_IN 8 // IR receiver pin (digital)
 #define L_IR 9 // left ir transmitter pin (digital)
 #define R_IR 10 // right ir transmitter pin (digital)
+#define L_TACT 9 // optional tactile sensor pin (digital)
+#define R_TACT 10 // optional tactile sensor pin (digital)
 
 // Analog pins
 #define VREF 6 // supply voltage (analog)
@@ -76,7 +78,8 @@ typedef enum dir_t dir_t;
 /**
 * Location of obstacle.
 */
-enum obs_t {NONE = 0, RIGHT = 1, LEFT = 2, BOTH = 3};
+enum obs_t {NONE = 0, IND = 0, RIGHT = 1, FRONT = 1, 
+			SWITCH1 = 1, LEFT = 2, BACK = 2, SWITCH2 = 2, BOTH = 3};
 typedef enum obs_t obs_t;
 
 class DFRobot2WD
@@ -130,7 +133,10 @@ class DFRobot2WD
         */
         inline void setEnc(uint32_t countR, uint32_t countL){ count_r = countR; count_l = countL; }
 
+		void initIRDetect();
         obs_t obstacleDetect(int* countR, int* countL);
+		void initTactile();
+		obs_t getSwitchState();
         boolean getKeyOne();
         boolean getKeyTwo();
         boolean getKeyThree();
@@ -205,6 +211,7 @@ class DFRobot2WD
         int16_t pulseWidth; // the width of the IR pulse for IR signal reception
         int16_t irCode; // the IR signal code received
         float reflectivity[5]; // values of bottom reflectivity sensors
+		boolean useTactile;
 
     protected:
         // encoder tick counts
@@ -328,6 +335,7 @@ void DFRobot2WD::dfRobotInit()
     DFRobot2WD::count_l = 0;
     irCode = 0;
     pulseWidth = 0;
+	useTactile = false;
     
     char i;
     for(i = 4; i <= 13; i++)
@@ -496,6 +504,17 @@ boolean DFRobot2WD::getKeyThree()
 */
 
 /**
+* Initializes the IR sensors (default) to be used for obstacle detection.
+* Disables the tactile sensors.
+*/
+void DFRobot2WD::initIRDetect() {
+	pinMode(L_IR, OUTPUT);
+	pinMode(R_IR, OUTPUT);
+	pcint0_init();
+	useTactile = false;
+}
+
+/**
 * Sends carrier pulses on the left IR LED.
 */
 void DFRobot2WD::obsSendLPulse()
@@ -537,6 +556,9 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
 {   
     obs_t obs = NONE;
     char i;
+	
+	if(useTactile)
+		return IND;
 
     DFRobot2WD::count_obs = 0;
     for(i = 0; i < 20; i++) // right transmitter sends 20 pulses
@@ -568,6 +590,46 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
         *countL = DFRobot2WD::count_obs;
     
     return obs;
+}
+
+//**************************** Obstacle Detection ****************************
+
+/**
+The IR obstacle detection above tends not to be the most robust method for detecting objects in your path. Instead it is recommended that you wire up a pair of micro switches, one on the front and one on the back. This will give a more robust way of telling if a wall is in your way.
+<p>
+The wiring is as described. You wire the normally open (NO) node of the micro switch to the cathode of the IR LED (negative terminal). You can wire switch one to the right IR LED and switch two to the left IR LED. You do not need to remove the LEDs for this to work. The common node of each micro switch is wired to ground through a 1Kohm or 10Kohm pull down resistor. Both can be wired to the same resistor. The pull down resistor is then wired to the ground on the robot. There are several options for doing this. The easiest is to connect the resistor to a single standard 0.1" pitch receptacle, and then plug the receptacle onto the bottom-left pin of the ICSP header (the pin closest to the batteries and wheel).
+<p>
+This setup will allow you to tell when you hit a wall or other object. Both IR LED pins will be pulled low when you hit either switch one or switch two. This means you can't detect direction, except by inferring it through your current direction of travel. In theory, you could add more micro switches and determine which one was pressed based on your current direction of travel.
+<p>
+To use the switches, you will need to set the IR LED pins to inputs and detect when they are false. To regain use of your IR LEDs, simple change the pins to outputs and unplug the pull-down resistor from the ICSP ground pin.
+*/
+
+/**
+* Initializes the optional push buttons. Disables IR object detection.
+*/
+void DFRobot2WD::initTactile() {
+	PCICR = PCICR & 0XFE;
+	pinMode(L_IR, INPUT);
+	pinMode(R_IR, INPUT);
+	useTactile = true;
+}
+
+/**
+* Gets the state of the switches, based off current direction of travel.
+*/
+obs_t DFRobot2WD::getSwitchState() {
+
+	if(!useTactile)
+		return IND;
+		
+	if(direction_r == FORWARD && direction_l == FORWARD && (!digitalRead(L_IR) || !digitalRead(R_IR)))
+		return FRONT;
+	else if(direction_r == BACKWARD && direction_l == BACKWARD && (!digitalRead(L_IR) || !digitalRead(R_IR)))
+		return BACK;
+	else if(digitalRead(L_IR) && digitalRead(R_IR))
+		return NONE;
+	else
+		return IND;
 }
 
 //**************************** Line Following ****************************
