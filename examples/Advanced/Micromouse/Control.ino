@@ -2,7 +2,7 @@
 * @author Bryan Stadick - stadi012@umn.edu
 * @version 1.0.0
 *
-* Controls.ino - Example PID control for the DFRobot MiniQ 2WD.
+* Control.ino - Example PID control for the DFRobot MiniQ 2WD.
 */
 
 /* This library is free software; you can redistribute it and/or

@@ -3,7 +3,7 @@
 * @version 1.1.0
 * @file
 *
-* DFRobot2WD.h - Library of functions for the DFRobot MiniQ 2WD
+* DFRobot2WD.h - Library of functions for the DFRobot MiniQ 2WD v1.0
 * <p>
 * DFRobot is a trademark of <a href="http://www.dfrobot.com">DFRobot</a>. The author of this library does not claim
 * any ownership or association with DFRobot or their affiliates.
@@ -214,10 +214,10 @@ class DFRobot2WD
         */
         inline void setEnc(uint32_t countR, uint32_t countL){ count_r = countR; count_l = countL; }
 
-		void initIRDetect();
+        void initIRDetect();
         obs_t obstacleDetect(int* countR, int* countL);
-		void initTactile();
-		obs_t getTactileState();
+        void initTactile();
+        obs_t getTactileState();
         boolean getKeyOne();
         boolean getKeyTwo();
         boolean getKeyThree();
@@ -292,7 +292,7 @@ class DFRobot2WD
         int16_t pulseWidth; // the width of the IR pulse for IR signal reception
         int16_t irCode; // the IR signal code received
         float reflectivity[5]; // values of bottom reflectivity sensors
-		boolean useTactile;
+        boolean useTactile;
 
     protected:
         /**
@@ -392,9 +392,9 @@ void EncLISR();
 ISR(INT0_vect)
 {
     DFRobot2WD::encRISR();
-	#ifdef ENCISR
-	EncRISR();
-	#endif
+    #ifdef ENCISR
+    EncRISR();
+    #endif
 }
 
 /**
@@ -405,9 +405,9 @@ ISR(INT0_vect)
 ISR(INT1_vect)
 {
     DFRobot2WD::encLISR();
-	#ifdef ENCISR
-	EncLISR();
-	#endif
+    #ifdef ENCISR
+    EncLISR();
+    #endif
 }
 
 /**
@@ -501,7 +501,7 @@ void DFRobot2WD::dfRobotInit()
     DFRobot2WD::count_l = 0;
     irCode = 0;
     pulseWidth = 0;
-	useTactile = false;
+    useTactile = false;
     
     char i;
     for(i = 4; i <= 13; i++)
@@ -679,10 +679,10 @@ boolean DFRobot2WD::getKeyThree()
 * Disables the tactile sensors.
 */
 void DFRobot2WD::initIRDetect() {
-	pinMode(L_IR, OUTPUT);
-	pinMode(R_IR, OUTPUT);
-	pcint0_init();
-	useTactile = false;
+    pinMode(L_IR, OUTPUT);
+    pinMode(R_IR, OUTPUT);
+    pcint0_init();
+    useTactile = false;
 }
 
 /**
@@ -727,9 +727,9 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
 {   
     obs_t obs = NONE;
     char i;
-	
-	if(useTactile)
-		return IND;
+    
+    if(useTactile)
+        return IND;
 
     DFRobot2WD::count_obs = 0;
     for(i = 0; i < 20; i++) // right transmitter sends 20 pulses
@@ -797,10 +797,10 @@ obs_t DFRobot2WD::obstacleDetect(int* countR, int* countL)
 * Initializes the optional push buttons. Disables IR object detection.
 */
 void DFRobot2WD::initTactile() {
-	PCICR = PCICR & 0XFE;
-	pinMode(L_IR, INPUT);
-	pinMode(R_IR, INPUT);
-	useTactile = true;
+    PCICR = PCICR & 0XFE;
+    pinMode(L_IR, INPUT);
+    pinMode(R_IR, INPUT);
+    useTactile = true;
 }
 
 /**
@@ -811,17 +811,17 @@ void DFRobot2WD::initTactile() {
 */
 obs_t DFRobot2WD::getTactileState() {
 
-	if(!useTactile)
-		return IND;
-		
-	if(direction_r == FORWARD && direction_l == FORWARD && (!digitalRead(L_IR) || !digitalRead(R_IR)))
-		return FRONT;
-	else if(direction_r == BACKWARD && direction_l == BACKWARD && (!digitalRead(L_IR) || !digitalRead(R_IR)))
-		return BACK;
-	else if(digitalRead(L_IR) && digitalRead(R_IR))
-		return NONE;
-	else
-		return IND;
+    if(!useTactile)
+        return IND;
+        
+    if(direction_r == FORWARD && direction_l == FORWARD && (!digitalRead(L_IR) || !digitalRead(R_IR)))
+        return FRONT;
+    else if(direction_r == BACKWARD && direction_l == BACKWARD && (!digitalRead(L_IR) || !digitalRead(R_IR)))
+        return BACK;
+    else if(digitalRead(L_IR) && digitalRead(R_IR))
+        return NONE;
+    else
+        return IND;
 }
 
 //**************************** Line Following ****************************

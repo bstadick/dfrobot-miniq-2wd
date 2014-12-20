@@ -2,7 +2,8 @@
 * @author Bryan Stadick - stadi012@umn.edu
 * @version 1.1.0
 *
-* Micromouse.ino - Micromouse base code. Simply demos some of the functions available.
+* Micromouse.ino - Micromouse base code. Simply demos some of the functions
+* available.
 */
 
 /* This library is free software; you can redistribute it and/or

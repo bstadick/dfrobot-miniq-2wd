@@ -2,7 +2,7 @@
 * @author Bryan Stadick - stadi012@umn.edu
 * @version 1.1.0
 *
-* Micromouse.ino - Micromouse base code. Simply demos some of the functions available.
+* IRCommand.ino - Allows for control of the robot using the included IR remote.
 */
 
 /* This library is free software; you can redistribute it and/or
@@ -33,11 +33,26 @@ void setup() {
 }
 
 void loop() {
-    switch(robot.getIRRemote()) {
-         case -1256:
-             // do something
-              break;
-          default:
-              break;
+    int code = robot.getIRRemote();
+    switch(code) {
+        case 0xff00: // No IR command = Stop
+            robot.motorStop();
+            break;
+        case 0xfe01: // Vol+ = Forward
+            robot.motorControl(FORWARD,100,FORWARD,100);
+            break;
+        case 0xf609: // Vol- = Backward
+            robot.motorControl(BACKWARD,100,BACKWARD,100);
+            break;
+        case 0xfb04:  // Prev? = Left?
+            robot.motorControl(FORWARD,100,BACKWARD,100);
+            break;
+        case 0xf906: // Next? = Right?
+            robot.motorControl(BACKWARD,100,FORWARD,100);
+            break;
+        default:
+            robot.motorStop();
+            break;
     }
+    Serial.println(code);
 }

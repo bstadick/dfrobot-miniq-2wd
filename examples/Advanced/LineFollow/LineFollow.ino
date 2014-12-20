@@ -2,7 +2,7 @@
 * @author Bryan Stadick - stadi012@umn.edu
 * @version 1.1.0
 *
-* Micromouse.ino - Micromouse base code. Simply demos some of the functions available.
+* LineFollow.ino - Has the robot follow a line.
 */
 
 /* This library is free software; you can redistribute it and/or

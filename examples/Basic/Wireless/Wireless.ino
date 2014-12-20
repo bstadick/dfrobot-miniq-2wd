@@ -2,7 +2,7 @@
 * @author Bryan Stadick - stadi012@umn.edu
 * @version 1.1.0
 *
-* Micromouse.ino - Micromouse base code. Simply demos some of the functions available.
+* Wireless.ino - Takes drive commands from the wireless serial port.
 */
 
 /* This library is free software; you can redistribute it and/or
