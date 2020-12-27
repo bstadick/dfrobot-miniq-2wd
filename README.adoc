@@ -4,8 +4,10 @@ This project is an unofficial Arduino library for the DFRobot MiniQ 2WD.
 
 Allows for simpler manipulation of functionality of the DFRobot MiniQ 2WD robot. Provides functions for controlling motors and outputs, reading sensors, and handling communication.
 
-See the [Wiki page](https://github.com/bstadick/dfrobot-miniq-2wd/wiki) or the [full documentation](http://htmlpreview.github.io/?https://github.com/bstadick/dfrobot-miniq-2wd/blob/main/docs/index.html) for use of the library and robot.
+See examples folder for example usage with the DFRobot MiniQ 2WD in various scenarios.
 
+See the [Wiki page](https://github.com/bstadick/dfrobot-miniq-2wd/wiki) or the [full documentation](http://htmlpreview.github.io/?https://github.com/bstadick/dfrobot-miniq-2wd/blob/main/docs/index.html) in the docs folder for use of the library and robot.
 
-DFRobot is a trademark of DFRobot. The author of this library does not claim any
-ownership or association with DFRobot or their affiliates.
+See the documentation folder for 3rd party documents on the DFRobot MiniQ 2WD.
+
+DFRobot is a trademark of [DFRobot](http://www.dfrobot.com). The author of this library does not claim any ownership or association with DFRobot or their affiliates.
